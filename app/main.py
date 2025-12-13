@@ -4,7 +4,7 @@ StreamFix Gateway - Minimal JSON Repair Proxy
 import os
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api import chat_noauth, health, demo, streamfix
+from app.api import chat_noauth, health, demo
 
 # Create FastAPI app
 app = FastAPI(
@@ -27,7 +27,6 @@ app.add_middleware(
 # Include routers
 app.include_router(health.router, tags=["health"])
 app.include_router(chat_noauth.router, tags=["chat"])
-app.include_router(streamfix.router, tags=["streamfix"])
 app.include_router(demo.router, tags=["demo"])
 
 @app.get("/")
