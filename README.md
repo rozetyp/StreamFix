@@ -149,7 +149,13 @@ export OPENROUTER_API_KEY="sk-or-v1-..."  # Get free key at openrouter.ai
 python app/main.py
 ```
 
-Deploy anywhere: Railway, Fly.io, AWS, your laptop.
+## Documentation
+
+- **[Contributing Guide](CONTRIBUTING.md)** - Development setup and guidelines
+- **[Security Policy](SECURITY.md)** - Vulnerability reporting and best practices  
+- **[Implementation Details](docs/IMPLEMENTATION.md)** - Technical architecture
+- **[Known Cases](docs/KNOWN_CASES.md)** - Test coverage and validation
+- **[Project Status](docs/PROJECT_STATUS.md)** - Current feature status
 ---
 
 ## Repair Artifacts & Debugging
