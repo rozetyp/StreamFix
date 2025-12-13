@@ -43,12 +43,35 @@ curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
   -d '{"model": "anthropic/claude-3-haiku", "stream": true, "messages": [{"role": "user", "content": "Count to 3"}]}'
 ```
 
-## Proven Capabilities (29 Tests Passing)
+## Proven Capabilities (29 Unit Tests + Live Integration Tests)
 
-✅ **Content Extraction**: `<think>` blocks, markdown fences, mixed content (tests: `test_think_block_removal`, `test_fenced_json`)  
-✅ **JSON Repair**: Trailing commas, bracket completion (tests: `test_trailing_comma_removal`, `test_truncated_repair`)  
-✅ **Streaming Safety**: Chunk boundary handling (tests: `test_randomized_chunk_boundaries`, `test_json_content_boundary_split`)  
-✅ **FSM Correctness**: String handling, nesting depth (tests: `test_escaped_content`, `test_nested_structures`)  
+✅ **Multi-Language HTTP Client Compatibility** (proven with tests)
+- Python requests library ✅ *test_multi_language.py*
+- Python httpx async library ✅ *test_multi_language.py*
+- curl command line ✅ *test_multi_language.py*  
+- Node.js native HTTPS module ✅ *test_multi_language.py*
+
+✅ **Live SSE Streaming Protocol** (proven with tests)
+- Real SSE event parsing ✅ *test_live_streaming.py*
+- Malformed JSON in streaming content ✅ *test_live_streaming.py*
+- Think block handling in streams ✅ *test_live_streaming.py*
+- Protocol compliance (headers, format) ✅ *test_live_streaming.py*
+
+✅ **Multi-Provider Compatibility** (proven with tests)
+- Anthropic Claude (3 Haiku, 3.5 Sonnet) ✅ *test_multi_provider.py*
+- OpenAI GPT-4o Mini ✅ *test_multi_provider.py*
+- Streaming across providers ✅ *test_multi_provider.py*
+- Consistent repair behavior ✅ *test_multi_provider.py*
+
+✅ **Content Extraction** (proven with unit tests)
+- `<think>` blocks, markdown fences, mixed content ✅ *test_fsm_fixtures.py*
+
+✅ **JSON Repair** (proven with unit tests)  
+- Trailing commas, bracket completion ✅ *test_fsm_fixtures.py*
+
+✅ **Streaming Safety** (proven with unit tests)
+- Chunk boundary handling ✅ *test_fsm_fixtures.py*
+
 ✅ **Production Ready**: Live endpoint operational at https://streamfix.up.railway.app  
 
 ## Tested JSON Issues (Proven with Unit Tests)
@@ -72,10 +95,9 @@ curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
 - Randomized chunk sizes produce identical results ✅ *test_randomized_chunk_boundaries*
 
 ### **Not Yet Tested** (honest limitations)
-- Multi-language HTTP client compatibility (only Python tests)
-- Live streaming with real SSE protocol (only simulated chunks)
-- Cross-provider reliability comparison (only OpenRouter tested)
-- Unquoted keys and single quotes (implementation exists, tests missing)  
+- More complex JSON5 syntax (comments, hex numbers)
+- Schema validation beyond structural fixes
+- Large-scale concurrent request handling  
 
 ## Deployment
 
