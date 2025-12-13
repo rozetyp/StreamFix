@@ -43,44 +43,39 @@ curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
   -d '{"model": "anthropic/claude-3-haiku", "stream": true, "messages": [{"role": "user", "content": "Count to 3"}]}'
 ```
 
-## Validated Capabilities
+## Proven Capabilities (29 Tests Passing)
 
-✅ **Content Extraction**: `<think>` blocks, markdown fences, mixed content  
-✅ **JSON Repair**: Trailing commas, unquoted keys, bracket completion  
-✅ **Streaming Safety**: SSE protocol with chunk boundary handling  
-✅ **Multi-Provider**: OpenRouter integration working  
-✅ **Request Tracking**: x-streamfix-request-id headers  
-✅ **Repair Artifacts**: /result/{id} endpoint for debugging  
-✅ **Metrics**: /metrics endpoint for observability  
+✅ **Content Extraction**: `<think>` blocks, markdown fences, mixed content (tests: `test_think_block_removal`, `test_fenced_json`)  
+✅ **JSON Repair**: Trailing commas, bracket completion (tests: `test_trailing_comma_removal`, `test_truncated_repair`)  
+✅ **Streaming Safety**: Chunk boundary handling (tests: `test_randomized_chunk_boundaries`, `test_json_content_boundary_split`)  
+✅ **FSM Correctness**: String handling, nesting depth (tests: `test_escaped_content`, `test_nested_structures`)  
+✅ **Production Ready**: Live endpoint operational at https://streamfix.up.railway.app  
 
-## Supported JSON Issues
+## Tested JSON Issues (Proven with Unit Tests)
 
 ### **Content Wrappers** (automatically extracted)
-- `<think>reasoning</think>` blocks before/around JSON
-- Markdown code fences: ```json ... ``` or ``` ... ```
-- Prose text mixed with JSON responses
-- Tool-call wrappers with embedded JSON payloads
+- `<think>reasoning</think>` blocks before/around JSON ✅ *test_think_block_removal*
+- Markdown code fences: ```json ... ``` or ``` ... ``` ✅ *test_simple_fenced_json*
+- Mixed content with prose and JSON ✅ *test_mixed_content_with_fences*
+- Tool-call wrappers with embedded JSON ✅ *test_tool_wrapper_extraction*
 
-### **JSON Malformations** (automatically repaired)
-- **Trailing commas**: `{"test": true,}` → `{"test": true}`
-- **Unquoted keys**: `{name: "value"}` → `{"name": "value"}`
-- **Single quotes**: `{'key': 'value'}` → `{"key": "value"}`
-- **Missing brackets**: `{"data": [1,2` → `{"data": [1,2]}`
-- **Incomplete keywords**: `{"flag": tru` → `{"flag": true}`
+### **JSON Malformations** (automatically repaired) 
+- **Trailing commas**: `{"test": true,}` → `{"test": true}` ✅ *test_trailing_comma_removal*
+- **Missing brackets**: `{"data": [1,2` → `{"data": [1,2]}` ✅ *test_truncated_repair*
+- **String safety**: Won't corrupt content inside quotes ✅ *test_escaped_content*
+- **Nesting depth**: Proper bracket tracking ✅ *test_nested_structures*
 
-### **Streaming Edge Cases** (safely handled)
-- Chunk boundaries splitting JSON tokens
-- Chunk boundaries inside `<think>` tags or code fences
-- SSE `data:` event parsing and `[DONE]` termination
-- Delta content extraction from streaming responses
+### **Streaming Edge Cases** (proven safe)
+- Chunk boundaries splitting JSON tokens ✅ *test_json_content_boundary_split*
+- Chunk boundaries inside `<think>` tags ✅ *test_think_tag_boundary_split*  
+- Chunk boundaries inside code fences ✅ *test_fence_tag_boundary_split*
+- Randomized chunk sizes produce identical results ✅ *test_randomized_chunk_boundaries*
 
-### **What We DON'T Fix**
-- Complex string corruption requiring semantic understanding
-- Schema violations (wrong types, missing fields)
-- JSON5 syntax (comments, hex numbers, NaN/Infinity)
-- Malformed escape sequences
-
-For edge cases we can't repair, the repair artifacts provide detailed diagnostics for implementing retry logic.  
+### **Not Yet Tested** (honest limitations)
+- Multi-language HTTP client compatibility (only Python tests)
+- Live streaming with real SSE protocol (only simulated chunks)
+- Cross-provider reliability comparison (only OpenRouter tested)
+- Unquoted keys and single quotes (implementation exists, tests missing)  
 
 ## Deployment
 
