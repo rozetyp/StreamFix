@@ -2,19 +2,8 @@
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 
-# Database 
-asyncpg==0.29.0
-sqlalchemy[asyncio]==2.0.23
-
-# HTTP client for OpenRouter
+# HTTP client for upstream APIs
 httpx==0.25.2
-
-# JSON Schema validation
-jsonschema==4.20.0
-
-# Crypto for API key hashing and encryption
-argon2-cffi==23.1.0
-cryptography>=41.0.0
 
 # Environment and config
 python-decouple==3.8
