@@ -1,0 +1,28 @@
+# Test fixture: Large nested JSON with arrays
+{
+  "data": [
+    {
+      "id": "user_001",
+      "profile": {
+        "name": "Complex User",
+        "settings": {
+          "preferences": ["dark_mode", "notifications"],
+          "permissions": {
+            "read": true,
+            "write": false,
+            "admin": false
+          }
+        }
+      },
+      "activity": [
+        {"timestamp": "2024-01-01", "action": "login"},
+        {"timestamp": "2024-01-02", "action": "update_profile"}
+      ]
+    }
+  ],
+  "metadata": {
+    "total_count": 1,
+    "page": 1,
+    "has_more": false
+  }
+}

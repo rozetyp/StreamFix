@@ -1,0 +1,17 @@
+# Test fixture: Nested structures
+{
+  "user": {
+    "name": "Alice",
+    "preferences": {
+      "theme": "dark",
+      "notifications": [
+        {"type": "email", "enabled": true},
+        {"type": "push", "enabled": false}
+      ]
+    }
+  },
+  "metadata": {
+    "version": "2.1",
+    "tags": ["important", "user-data"]
+  }
+}

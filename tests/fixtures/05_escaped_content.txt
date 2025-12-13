@@ -1,0 +1,2 @@
+# Test fixture: Escaped quotes and backslashes
+{"message": "Say \"hello\" and use \\backslash", "path": "C:\\Users\\test\\file.txt", "json_like": "{\"key\": \"value\"}"}

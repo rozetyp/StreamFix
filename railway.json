@@ -1,0 +1,23 @@
+{
+  "name": "StreamFix Gateway",
+  "description": "Make any AI API return reliable JSON - automatic repair for trailing commas, truncated responses, and mixed content",
+  "repository": "https://github.com/yourusername/streamfix-gateway",
+  "keywords": ["ai", "json", "api", "openai", "fastapi", "streaming"],
+  "env": {
+    "OPENROUTER_API_KEY": {
+      "description": "Your OpenRouter API key (get from https://openrouter.ai/)",
+      "required": true
+    },
+    "DISABLE_DB": {
+      "description": "Disable database for simple deployments",
+      "value": "true"
+    },
+    "UPSTREAM_BASE_URL": {
+      "description": "AI provider URL (defaults to OpenRouter)",
+      "value": "https://openrouter.ai/api/v1"
+    }
+  },
+  "healthcheck": {
+    "path": "/health"
+  }
+}

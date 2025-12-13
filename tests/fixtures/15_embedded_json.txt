@@ -1,0 +1,6 @@
+# Test fixture: String with embedded JSON-like content (should not confuse FSM)
+{
+  "description": "This field contains JSON-like text: {\"key\": \"value\"} but it's just a string",
+  "example_code": "const obj = {name: 'test', value: 42};",
+  "valid_json": true
+}

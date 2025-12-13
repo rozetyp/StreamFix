@@ -1,0 +1,4 @@
+# Test fixture: No JSON content (should fail gracefully)
+This is just plain text without any JSON structure.
+No brackets or braces here.
+Just regular content that should not match the FSM.

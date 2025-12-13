@@ -1,0 +1,7 @@
+# Test fixture: Close think tag split
+<think>
+Some reasoning
+</thin
+k>
+
+{"boundary": "test3"}

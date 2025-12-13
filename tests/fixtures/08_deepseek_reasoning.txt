@@ -1,0 +1,15 @@
+# Test fixture: DeepSeek style reasoning
+<think>
+User wants a list of programming languages. I should return them in a structured format.
+The best approach is to use a JSON array with objects containing name and category.
+</think>
+
+```json
+{
+  "languages": [
+    {"name": "Python", "category": "scripting"},
+    {"name": "JavaScript", "category": "web"},
+    {"name": "Rust", "category": "systems"}
+  ]
+}
+```

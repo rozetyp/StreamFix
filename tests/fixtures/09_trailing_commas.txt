@@ -1,0 +1,8 @@
+# Test fixture: Trailing commas (common error)
+{
+  "items": [
+    {"id": 1, "active": true,},
+    {"id": 2, "active": false,}
+  ],
+  "total": 2,
+}

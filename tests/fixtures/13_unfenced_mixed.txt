@@ -1,0 +1,6 @@
+# Test fixture: JSON mixed with other content (no fences)
+I'll provide the response data now:
+
+{"status": "success", "message": "Operation completed"}
+
+This should work without fences too.

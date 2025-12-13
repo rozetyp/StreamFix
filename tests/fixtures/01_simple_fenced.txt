@@ -1,0 +1,4 @@
+# Test fixture: Simple fenced JSON
+```json
+{"name": "John", "age": 30}
+```

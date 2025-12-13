@@ -1,0 +1,6 @@
+# Test fixture: Think block with JSON
+<think>
+The user wants a JSON response. I need to provide a clean object with their requested data.
+</think>
+
+{"result": "success", "data": [1, 2, 3]}

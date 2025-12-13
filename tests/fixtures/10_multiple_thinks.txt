@@ -1,0 +1,12 @@
+# Test fixture: Multiple think blocks
+<think>
+First I need to understand what the user wants.
+</think>
+
+Let me process this request.
+
+<think>
+Actually, I should return a JSON response with the analysis results.
+</think>
+
+{"analysis": "complete", "confidence": 0.95}

@@ -1,0 +1,7 @@
+# Test fixture: Think tag split across chunks
+<thi
+nk>
+Some reasoning here
+</think>
+
+{"boundary": "test1"}

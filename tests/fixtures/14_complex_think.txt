@@ -1,0 +1,39 @@
+# Test fixture: Complex think block with nested reasoning
+<think>
+The user is asking for a complex data structure. Let me think about this:
+
+1. They need user information
+2. They want it in JSON format  
+3. I should include nested objects and arrays
+4. Let me structure this properly:
+   - User object with id, name, email
+   - Preferences object with settings
+   - Array of recent activities
+
+Actually, let me reconsider the structure...
+</think>
+
+Here's the JSON response you requested:
+
+```json
+{
+  "user": {
+    "id": "12345",
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "preferences": {
+      "theme": "light",
+      "language": "en",
+      "notifications": {
+        "email": true,
+        "push": false,
+        "sms": false
+      }
+    },
+    "recent_activity": [
+      {"action": "login", "timestamp": "2024-01-15T10:30:00Z"},
+      {"action": "profile_update", "timestamp": "2024-01-15T11:15:00Z"}
+    ]
+  }
+}
+```

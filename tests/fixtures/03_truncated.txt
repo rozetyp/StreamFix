@@ -1,0 +1,2 @@
+# Test fixture: Truncated JSON
+{"incomplete": "object", "array": [1, 2, {"nested": true

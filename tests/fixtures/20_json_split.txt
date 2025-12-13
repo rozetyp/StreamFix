@@ -1,0 +1,8 @@
+# Test fixture: JSON split across chunks
+<think>
+Reasoning here
+</think>
+
+{"boundary": "test
+5", "split": tr
+ue}
