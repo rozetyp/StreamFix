@@ -153,9 +153,8 @@ python app/main.py
 
 - **[Contributing Guide](CONTRIBUTING.md)** - Development setup and guidelines
 - **[Security Policy](SECURITY.md)** - Vulnerability reporting and best practices  
-- **[Implementation Details](docs/IMPLEMENTATION.md)** - Technical architecture
-- **[Known Cases](docs/KNOWN_CASES.md)** - Test coverage and validation
-- **[Project Status](docs/PROJECT_STATUS.md)** - Current feature status
+- **[Technical Details](docs/TECHNICAL.md)** - Architecture and implementation
+- **[GitHub Setup](docs/GITHUB_SETUP.md)** - Repository configuration
 ---
 
 ## Repair Artifacts & Debugging
