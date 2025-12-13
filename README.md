@@ -31,7 +31,7 @@ StreamFix automatically repairs these issues in real-time:
 - 🎯 **Smart Content Extraction** - Removes thinking blocks, extracts from code fences
 - 🔗 **Drop-in Replacement** - OpenAI-compatible API, works with existing code
 - 🧠 **FSM-Powered** - Finite State Machine handles any malformation automatically
-- 📊 **Request Tracking** - Retrieve repair details with unique request IDs
+- 🆓 **Completely Free** - No usage limits, no tracking, just reliable JSON
 
 ## 🏃‍♂️ **Quick Start**
 
@@ -44,16 +44,15 @@ cd streamfix-gateway
 pip install -r requirements.txt
 ```
 
-**2. Configure Environment:**
+**3. Configure Environment:**
 ```bash
-cp env.example .env
-# Edit .env with your OpenRouter API key
+cp .env.example .env
+# Add your OpenRouter API key to .env
 ```
 
 **3. Run:**
 ```bash
 # Development
-export DISABLE_DB=true
 python -m uvicorn app.main:app --reload
 
 # Production  
@@ -109,7 +108,6 @@ data = json.loads(content)  # Always works ✅
 Environment Variables:
 ```
 OPENROUTER_API_KEY=your_key
-DISABLE_DB=true
 PORT=8000
 ```
 

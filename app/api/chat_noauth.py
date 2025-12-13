@@ -59,15 +59,14 @@ async def chat_completions(request: Request):
                     )
                 
                 # Use FSM stream processor
-                fsm_stream, request_id = await create_fsm_stream(response)
+                fsm_stream = await create_fsm_stream(response)
                 
                 return StreamingResponse(
                     fsm_stream,
                     media_type="text/event-stream",  # Proper SSE media type
                     headers={
                         "Cache-Control": "no-cache",
-                        "Connection": "keep-alive",
-                        "X-StreamFix-Request-Id": request_id  # Include request ID for later retrieval
+                        "Connection": "keep-alive"
                     }
                 )
             else:
