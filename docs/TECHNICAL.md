@@ -53,6 +53,35 @@ curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
 ✅ **Repair Artifacts**: /result/{id} endpoint for debugging  
 ✅ **Metrics**: /metrics endpoint for observability  
 
+## Supported JSON Issues
+
+### **Content Wrappers** (automatically extracted)
+- `<think>reasoning</think>` blocks before/around JSON
+- Markdown code fences: ```json ... ``` or ``` ... ```
+- Prose text mixed with JSON responses
+- Tool-call wrappers with embedded JSON payloads
+
+### **JSON Malformations** (automatically repaired)
+- **Trailing commas**: `{"test": true,}` → `{"test": true}`
+- **Unquoted keys**: `{name: "value"}` → `{"name": "value"}`
+- **Single quotes**: `{'key': 'value'}` → `{"key": "value"}`
+- **Missing brackets**: `{"data": [1,2` → `{"data": [1,2]}`
+- **Incomplete keywords**: `{"flag": tru` → `{"flag": true}`
+
+### **Streaming Edge Cases** (safely handled)
+- Chunk boundaries splitting JSON tokens
+- Chunk boundaries inside `<think>` tags or code fences
+- SSE `data:` event parsing and `[DONE]` termination
+- Delta content extraction from streaming responses
+
+### **What We DON'T Fix**
+- Complex string corruption requiring semantic understanding
+- Schema violations (wrong types, missing fields)
+- JSON5 syntax (comments, hex numbers, NaN/Infinity)
+- Malformed escape sequences
+
+For edge cases we can't repair, the repair artifacts provide detailed diagnostics for implementing retry logic.  
+
 ## Deployment
 
 **Railway**: https://streamfix.up.railway.app  
