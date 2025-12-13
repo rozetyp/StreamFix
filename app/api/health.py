@@ -4,7 +4,6 @@ Health and system status endpoints
 from datetime import datetime
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.config import config
 
 router = APIRouter()
 
@@ -22,12 +21,6 @@ async def health_check():
         timestamp=datetime.utcnow(),
         version="1.0.0"
     )
-    except Exception:
-        db_status = "unhealthy"
-    
-    return HealthResponse(
-        status="healthy" if db_status == "healthy" else "unhealthy",
-        version="0.1.0",
         timestamp=datetime.utcnow()
     )
 
