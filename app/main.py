@@ -26,7 +26,7 @@ app.add_middleware(
 
 # Include routers
 app.include_router(health.router, tags=["health"])
-app.include_router(chat_noauth.router, prefix="/v1", tags=["chat"])
+app.include_router(chat_noauth.router, tags=["chat"])
 app.include_router(streamfix.router, prefix="/streamfix", tags=["streamfix"])
 
 @app.get("/")
