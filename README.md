@@ -64,7 +64,10 @@ curl https://streamfix.up.railway.app/v1/chat/completions \
   -d '{
     "model": "anthropic/claude-3-haiku",
     "messages": [{"role": "user", "content": "Return broken JSON: {\"test\": true,}"}]
-  }'
+  }' -i | grep x-streamfix-request-id
+
+# Get the request ID from the header, then:
+curl https://streamfix.up.railway.app/result/req_YOUR_ID
 ```
 
 **2. Point your existing code** at StreamFix:
@@ -72,11 +75,11 @@ curl https://streamfix.up.railway.app/v1/chat/completions \
 # Before: unreliable parsing
 client = OpenAI()
 
-# After: guaranteed parsing  
+# After: guaranteed parsing + repair insights
 client = OpenAI(base_url="https://streamfix.up.railway.app/v1")
 ```
 
-**3. Never see** `json.loads()` errors again.
+**3. Never see** `json.loads()` errors again + get detailed repair reports.
 
 ---
 
@@ -147,7 +150,52 @@ python app/main.py
 ```
 
 Deploy anywhere: Railway, Fly.io, AWS, your laptop.
+---
 
+## Repair Artifacts & Debugging
+
+**Every request gets a tracking ID:**
+```bash
+curl -i https://streamfix.up.railway.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "claude-3-haiku", "messages": [...]}'
+
+# Response includes: x-streamfix-request-id: req_abc123
+```
+
+**View what got repaired:**
+```bash
+curl https://streamfix.up.railway.app/result/req_abc123
+```
+
+```json
+{
+  "request_id": "req_abc123",
+  "model": "claude-3-haiku", 
+  "original_content": "{\"test\": true,}",
+  "repaired_content": "{\"test\": true}",
+  "repairs_applied": ["remove_trailing_comma"],
+  "parse_success": true,
+  "status": "REPAIRED"
+}
+```
+
+**Monitor repair statistics:**
+```bash
+curl https://streamfix.up.railway.app/metrics
+```
+
+```json
+{
+  "total_requests": 42,
+  "repair_rate": 0.15,
+  "parse_success_rate": 1.0,
+  "repair_types": {
+    "remove_trailing_comma": 4,
+    "quote_unquoted_keys": 2
+  }
+}
+```
 ---
 
 ## Supported Models
@@ -173,7 +221,7 @@ A: No. Streaming passes through immediately. Repair happens in background for fi
 A: It passes through unchanged with zero modifications.
 
 **Q: Can I see what got repaired?**  
-A: Working on repair reports - will show original vs repaired JSON with applied fixes.
+A: Yes! Every response includes `x-streamfix-request-id` header. Use `GET /result/{id}` to see original vs repaired content and what repairs were applied.
 
 **Q: Does this work with function calling?**  
 A: Yes, repairs JSON in function call arguments and responses.
@@ -189,18 +237,20 @@ A: Yes, repairs JSON in function call arguments and responses.
 - Multi-model support via OpenRouter
 - Zero-code-change adoption
 
-**🎯 v1 Strategic Advantage (Simple)**
-- [ ] Request IDs in response headers (`x-streamfix-request-id`)
-- [ ] Basic repair logging (what got fixed)
-- [ ] Simple `/result/{id}` endpoint for repair artifacts
-- [ ] Failure classification (trailing comma, truncation, etc.)
+**✅ v1 Strategic Advantage (LIVE)**
+- ✅ Request IDs in response headers (`x-streamfix-request-id`)
+- ✅ Basic repair logging and artifact storage
+- ✅ `GET /result/{id}` endpoint for repair artifacts
+- ✅ `GET /metrics` endpoint for repair statistics
+- ✅ Failure classification (trailing comma, truncation, etc.)
 
 **🚀 v2+ Advanced (When Needed)**
-- [ ] Usage analytics and model reliability rankings
+- [ ] Enhanced observability dashboard
 - [ ] Schema validation via headers
-- [ ] Team features and observability dashboard
+- [ ] Team features and enterprise deployment
+- [ ] Custom repair rules and patterns
 
-*Keeping it simple to maintain while providing unique value.*
+*Simple to maintain while providing unique strategic value.*
 
 ---
 
