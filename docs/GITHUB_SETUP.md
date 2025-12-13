@@ -28,7 +28,7 @@ real-time-processing
 ### About Section
 - **Description**: JSON repair proxy for AI streaming APIs. Drop-in OpenAI compatibility with automatic malformed JSON fixing.
 - **Website**: https://streamfix.up.railway.app
-- **Topics**: Use the 15 tags listed above
+- **Topics**: Use the tags listed above (up to 20 allowed)
 
 ### Features to Enable
 - [x] Issues (for bug reports and features)

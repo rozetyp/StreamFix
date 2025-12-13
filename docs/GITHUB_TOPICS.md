@@ -1,37 +1,38 @@
-# Streamfix Gateway Topics
+# StreamFix Gateway Topics
 
-Topics to improve discoverability:
+**Optimized GitHub topics for maximum discoverability:**
 
-## Primary Tags
-- **ai-tools** - Main category for AI developer tools
-- **json-parser** - Core functionality 
-- **openai-api** - API compatibility
-- **streaming-api** - Real-time processing
-- **fastapi** - Framework used
-- **python** - Programming language
+## Recommended Topic Set (20 max)
+```
+ai-tools
+json-parser
+openai-api
+streaming-api
+json-repair
+ai-json-fix
+llm-tools
+fastapi
+python
+anthropic
+gpt-api
+developer-tools
+api-gateway
+production-ready
+real-time-processing
+openrouter
+malformed-json
+chatbot-tools
+json-extraction
+ai-applications
+```
 
-## Problem-Focused Tags  
-- **json-repair** - Core value proposition
-- **ai-json-fix** - Specific use case
-- **llm-tools** - Large language model tooling
-- **malformed-json** - Problem solver
-- **trailing-commas** - Specific issue addressed
-- **json-validation** - Related functionality
+## Topic Strategy
 
-## Ecosystem Tags
-- **openrouter** - Supported provider
-- **anthropic** - Claude compatibility  
-- **gpt-api** - ChatGPT compatibility
-- **ai-proxy** - Middleware category
-- **developer-tools** - Target audience
-- **api-gateway** - Architecture pattern
+**Primary Discovery (5)**: ai-tools, json-parser, openai-api, streaming-api, json-repair  
+**Problem-Focused (3)**: ai-json-fix, malformed-json, llm-tools  
+**Technical Stack (3)**: fastapi, python, api-gateway  
+**Ecosystem (4)**: anthropic, gpt-api, openrouter, developer-tools  
+**Use Case (3)**: chatbot-tools, ai-applications, json-extraction  
+**Quality (2)**: production-ready, real-time-processing
 
-## Use Case Tags
-- **ai-applications** - Target use case
-- **chatbot-tools** - Common application
-- **json-extraction** - Core feature
-- **real-time-processing** - Performance benefit
-- **production-ready** - Stability indicator
-
-## GitHub Topics (max 20)
-Select the most impactful combination for GitHub repository topics.
+This combination targets users searching for AI JSON solutions while highlighting technical credibility and production readiness.
