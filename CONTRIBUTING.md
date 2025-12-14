@@ -1,13 +1,31 @@
-# Contributing to StreamFix Gateway
+# Contributing to StreamFix
 
-Thank you for your interest in contributing! StreamFix is designed to be a reliable, simple JSON repair proxy for AI applications.
+Thanks for your interest in contributing to StreamFix! 🎉
 
 ## Quick Start
 
-1. **Fork the repository**
-2. **Clone your fork**: `git clone https://github.com/YOUR-USERNAME/StreamFix.git`
-3. **Install dependencies**: `pip install -r requirements.txt`
-4. **Run tests**: `python -m pytest tests/`
+1. **Fork & Clone**
+   ```bash
+   git clone https://github.com/your-username/streamfix.git
+   cd streamfix
+   ```
+
+2. **Development Setup**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # or `.venv\Scripts\activate` on Windows
+   pip install -e .
+   ```
+
+3. **Run Tests**
+   ```bash
+   python -m pytest tests/
+   ```
+
+4. **Start Development Server**
+   ```bash
+   streamfix serve --port 8000
+   ```
 5. **Start development server**: `python -m app.main`
 
 ## Development Guidelines

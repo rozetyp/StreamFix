@@ -2,6 +2,11 @@
 
 **OpenAI-compatible JSON repair proxy** - fixes broken LLM JSON automatically.
 
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Deploy on Railway](https://img.shields.io/badge/Deploy-Railway-blueviolet)](https://railway.app/template/streamfix)
+[![OpenAI Compatible](https://img.shields.io/badge/OpenAI-Compatible-green)](https://openai.com)
+
 ## ⚡ Quick Start (30 seconds)
 
 ### Option 1: Install & Run
@@ -104,9 +109,24 @@ docker run -p 8000:8000 -e OPENROUTER_API_KEY=key streamfix/gateway
 
 **That's it.** StreamFix makes LLM JSON reliable with zero code changes.
 
+## 🛟 Support & Community
+
+- **Issues**: [Report bugs](https://github.com/rozetyp/streamfix/issues)
+- **Discussions**: [Feature requests](https://github.com/rozetyp/streamfix/discussions) 
+- **Documentation**: [Wiki](https://github.com/rozetyp/streamfix/wiki)
+- **Examples**: [Sample integrations](https://github.com/rozetyp/streamfix/tree/main/examples)
+
+## 🤝 Contributing
+
+Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
 ---
 
-**Full docs**: See `/docs/` folder for API reference, deployment guides, etc.
+**Full docs**: See [`/docs/`](docs/) folder for API reference, deployment guides, etc.
 ```bash
 # Test the live demo
 curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
