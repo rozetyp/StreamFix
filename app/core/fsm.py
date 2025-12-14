@@ -412,3 +412,27 @@ def fsm_result(state: JsonFsmState) -> tuple[str, str]:
             return (json_text, "DONE")
         return (json_text, "TRUNCATED")
     return ("", "FAILED")
+
+
+def extract_json_from_content(content: str) -> tuple[str, str]:
+    """
+    Extract JSON from mixed content (think blocks, fences, prose).
+    Returns (extracted_json, status)
+    status: DONE | TRUNCATED | FAILED
+    """
+    if not content:
+        return "", "FAILED"
+    
+    # Step 1: Preprocess to remove think blocks and handle fences
+    preprocess_state = PreprocessState()
+    preprocess_chunk(content, preprocess_state)
+    preprocess_finalize(preprocess_state)
+    clean_content = preprocess_get_result(preprocess_state)
+    
+    # Step 2: Run FSM extraction on cleaned content
+    fsm_state = JsonFsmState()
+    fsm_feed(fsm_state, clean_content)
+    fsm_finalize(fsm_state)
+    
+    # Step 3: Get final result
+    return fsm_result(fsm_state)

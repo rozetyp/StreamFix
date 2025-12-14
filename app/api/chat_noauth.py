@@ -11,10 +11,12 @@ from fastapi.responses import StreamingResponse
 import httpx
 from app.core.stream_processor import create_fsm_stream
 from app.core.repair import safe_repair
+from app.core.fsm import extract_json_from_content
 from app.core.schema_validator import (
     validate_against_schema, 
     is_valid_schema,
-    generate_schema_description
+    generate_schema_description,
+    extract_schema_requirements
 )
 
 # Simple in-memory store for repair artifacts (last 100 requests)
@@ -149,17 +151,21 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
     """Store repair artifact with optional schema validation and return repair info"""
     global repair_artifacts
     
-    # Attempt repair
+    # Phase 2: Extract JSON first, then validate schema
     try:
-        repaired_content = safe_repair(content) if content else content
+        # Step 1: Extract JSON from mixed content
+        extracted_json, extraction_status = extract_json_from_content(content)
+        
+        # Step 2: Repair the extracted JSON if needed
+        repaired_content = safe_repair(extracted_json) if extracted_json else ""
         repairs_applied = []
         parse_success = True
         
         # Simple repair detection
-        if content != repaired_content:
-            if ',' in content and ',' not in repaired_content.replace(',', ''):
+        if extracted_json != repaired_content:
+            if ',' in extracted_json and ',' not in repaired_content.replace(',', ''):
                 repairs_applied.append("remove_trailing_comma")
-            if '{' in content and '"' not in content.split(':')[0]:
+            if '{' in extracted_json and '"' not in extracted_json.split(':')[0]:
                 repairs_applied.append("quote_unquoted_keys")
         
         # Test if repaired content is valid JSON
@@ -169,14 +175,17 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
         except json.JSONDecodeError:
             parse_success = False
         
-        # Schema validation if provided
+        # Step 3: Schema validation on extracted+repaired JSON
         schema_valid = None
         schema_errors = []
         
-        if schema and parse_success:
+        if schema and parse_success and repaired_content.strip():
+            # Validate against schema only if we have valid JSON
             schema_valid, schema_errors = validate_against_schema(repaired_content, schema)
     except Exception:
+        extracted_json = ""
         repaired_content = content
+        extraction_status = "FAILED"
         repairs_applied = []
         parse_success = False
         schema_valid = None
@@ -185,6 +194,8 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
     # Determine overall status
     if schema_valid is False:
         status = "SCHEMA_INVALID"
+    elif extraction_status == "FAILED":
+        status = "EXTRACTION_FAILED"
     elif repairs_applied:
         status = "REPAIRED"
     else:
@@ -196,6 +207,8 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
         "timestamp": datetime.datetime.utcnow().isoformat(),
         "model": model,
         "original_content": content,
+        "extracted_json": extracted_json,
+        "extraction_status": extraction_status,
         "repaired_content": repaired_content,
         "repairs_applied": repairs_applied,
         "parse_success": parse_success,
