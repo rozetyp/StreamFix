@@ -1,16 +1,21 @@
 """
-OpenRouter proxy endpoint with FSM streaming support
+OpenRouter proxy endpoint with FSM streaming support and Contract Mode
 """
 import json
 import os
 import uuid
 import datetime
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from fastapi import APIRouter, Request, HTTPException, Response
 from fastapi.responses import StreamingResponse
 import httpx
 from app.core.stream_processor import create_fsm_stream
 from app.core.repair import safe_repair
+from app.core.schema_validator import (
+    validate_against_schema, 
+    is_valid_schema,
+    generate_schema_description
+)
 
 # Simple in-memory store for repair artifacts (last 100 requests)
 repair_artifacts = {}
@@ -26,6 +31,20 @@ async def chat_completions(request: Request, response: Response):
     Proxies to OpenRouter with FSM-based JSON repair
     """
     body = await request.json()
+    
+    # Extract schema for Contract Mode (optional)
+    schema = body.pop("schema", None)  # Remove from body to avoid sending to upstream
+    schema_description = None
+    
+    if schema:
+        # Validate provided schema
+        schema_valid, schema_error = is_valid_schema(schema)
+        if not schema_valid:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Invalid JSON schema provided: {schema_error}"
+            )
+        schema_description = generate_schema_description(schema)
     
     # Generate request ID for tracking
     request_id = f"req_{uuid.uuid4().hex[:12]}"
@@ -104,8 +123,14 @@ async def chat_completions(request: Request, response: Response):
                 original_content = response_data.get("choices", [{}])[0].get("message", {}).get("content", "")
                 model = body.get("model", "unknown")
                 
-                # Store repair artifact
-                repair_info = store_repair_artifact(request_id, original_content, model)
+                # Store repair artifact with schema validation
+                repair_info = store_repair_artifact(
+                    request_id, 
+                    original_content, 
+                    model, 
+                    schema=schema,
+                    schema_description=schema_description
+                )
                 
                 # Return potentially repaired response
                 if repair_info["repaired_content"] != original_content:
@@ -120,8 +145,8 @@ async def chat_completions(request: Request, response: Response):
         )
 
 
-def store_repair_artifact(request_id: str, content: str, model: str) -> dict:
-    """Store repair artifact and return repair info"""
+def store_repair_artifact(request_id: str, content: str, model: str, schema: Optional[Dict[str, Any]] = None, schema_description: Optional[str] = None) -> dict:
+    """Store repair artifact with optional schema validation and return repair info"""
     global repair_artifacts
     
     # Attempt repair
@@ -143,11 +168,27 @@ def store_repair_artifact(request_id: str, content: str, model: str) -> dict:
                 json.loads(repaired_content)
         except json.JSONDecodeError:
             parse_success = False
-            
+        
+        # Schema validation if provided
+        schema_valid = None
+        schema_errors = []
+        
+        if schema and parse_success:
+            schema_valid, schema_errors = validate_against_schema(repaired_content, schema)
     except Exception:
         repaired_content = content
         repairs_applied = []
         parse_success = False
+        schema_valid = None
+        schema_errors = []
+    
+    # Determine overall status
+    if schema_valid is False:
+        status = "SCHEMA_INVALID"
+    elif repairs_applied:
+        status = "REPAIRED"
+    else:
+        status = "PASSTHROUGH"
     
     # Store artifact
     artifact = {
@@ -158,8 +199,19 @@ def store_repair_artifact(request_id: str, content: str, model: str) -> dict:
         "repaired_content": repaired_content,
         "repairs_applied": repairs_applied,
         "parse_success": parse_success,
-        "status": "REPAIRED" if repairs_applied else "PASSTHROUGH"
+        "status": status
     }
+    
+    # Add schema validation results if schema was provided
+    if schema:
+        artifact.update({
+            "schema_provided": True,
+            "schema_description": schema_description,
+            "schema_valid": schema_valid,
+            "schema_errors": schema_errors
+        })
+    else:
+        artifact["schema_provided"] = False
     
     # Keep only last MAX_ARTIFACTS
     if len(repair_artifacts) >= MAX_ARTIFACTS:

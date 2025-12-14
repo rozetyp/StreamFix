@@ -5,6 +5,9 @@ uvicorn[standard]==0.24.0
 # HTTP client for upstream APIs
 httpx==0.25.2
 
+# JSON Schema validation for Contract Mode
+jsonschema==4.20.0
+
 # Environment and config
 python-decouple==3.8
 
