@@ -43,36 +43,89 @@ curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
   -d '{"model": "anthropic/claude-3-haiku", "stream": true, "messages": [{"role": "user", "content": "Count to 3"}]}'
 ```
 
-## Proven Capabilities (29 Unit Tests + Live Integration Tests)
+## Current Status: Contract Mode Phase 1 DEPLOYED ✅
 
-✅ **Multi-Language HTTP Client Compatibility** (proven with tests)
-- Python requests library ✅ *test_multi_language.py*
-- Python httpx async library ✅ *test_multi_language.py*
-- curl command line ✅ *test_multi_language.py*  
-- Node.js native HTTPS module ✅ *test_multi_language.py*
+**Live in Production:** https://streamfix.up.railway.app
 
-✅ **Live SSE Streaming Protocol** (proven with tests)
-- Real SSE event parsing ✅ *test_live_streaming.py*
-- Malformed JSON in streaming content ✅ *test_live_streaming.py*
-- Think block handling in streams ✅ *test_live_streaming.py*
-- Protocol compliance (headers, format) ✅ *test_live_streaming.py*
+### **Phase 1 Complete (December 14, 2025)**
+- ✅ **JSON Schema Validation**: `jsonschema` library integrated
+- ✅ **Enhanced API**: Optional `schema` parameter in requests
+- ✅ **Schema Artifacts**: Validation results stored with repair data
+- ✅ **Backward Compatibility**: All existing functionality preserved
+- ✅ **Production Ready**: Deployed and tested live
 
-✅ **Multi-Provider Compatibility** (proven with tests)
-- Anthropic Claude (3 Haiku, 3.5 Sonnet) ✅ *test_multi_provider.py*
-- OpenAI GPT-4o Mini ✅ *test_multi_provider.py*
-- Streaming across providers ✅ *test_multi_provider.py*
-- Consistent repair behavior ✅ *test_multi_provider.py*
+**Example Contract Mode Request:**
+```bash
+curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
+  -d '{
+    "model": "anthropic/claude-3-haiku",
+    "schema": {"type": "object", "properties": {"name": {"type": "string"}}},
+    "messages": [{"role": "user", "content": "Return person JSON"}]
+  }'
+```
 
-✅ **Content Extraction** (proven with unit tests)
-- `<think>` blocks, markdown fences, mixed content ✅ *test_fsm_fixtures.py*
+**Enhanced Repair Artifacts:**
+```json
+{
+  "request_id": "req_abc123",
+  "schema_provided": true,
+  "schema_description": "Object with 1 properties (1 required)",
+  "schema_valid": null,
+  "schema_errors": [],
+  "repairs_applied": ["quote_unquoted_keys"],
+  "status": "REPAIRED"
+}
+```
 
-✅ **JSON Repair** (proven with unit tests)  
-- Trailing commas, bracket completion ✅ *test_fsm_fixtures.py*
+## Phase 2 Roadmap: Smart Retry (Week 2)
 
-✅ **Streaming Safety** (proven with unit tests)
-- Chunk boundary handling ✅ *test_fsm_fixtures.py*
+### **Current Gap to Fix**
+Schema validation needs to run on **extracted JSON**, not raw content:
+```
+Current: Schema validation → Raw content (mixed prose + JSON)
+Target:  JSON extraction → Schema validation → Auto-retry if invalid
+```
 
-✅ **Production Ready**: Live endpoint operational at https://streamfix.up.railway.app  
+### **Phase 2 Implementation Plan**
+
+**Day 1-2: JSON Extraction Integration**
+- [ ] Run FSM extraction before schema validation
+- [ ] Validate extracted JSON objects against schema
+- [ ] Enhanced error messages for schema violations
+
+**Day 3-4: Auto-Retry Logic**  
+- [ ] Generate schema-aware retry prompts when validation fails
+- [ ] Single retry attempt with clearer instructions
+- [ ] Track retry success/failure in artifacts
+
+**Day 5: Enhanced Observability**
+- [ ] Schema validation metrics dashboard
+- [ ] Retry success rate tracking
+- [ ] Clear failure categorization
+
+### **Contract Mode Value Proposition**
+**"Guaranteed valid JSON or detailed failure analysis"**
+
+- **Input**: Any model + JSON schema
+- **Output**: Valid object matching schema OR forensic failure report
+- **Unique**: Works across all providers (even those without structured outputs)
+
+## Phase 3 Preview: Market Validation (Week 3)
+
+### **Target Customer Validation**
+- **Multi-provider teams** (OpenAI + Anthropic + local models)
+- **Agent builders** where schema failures break entire workflows
+- **Local model users** without structured output guarantees
+
+### **Pricing Strategy Test**
+- Free tier: Syntax repair (current functionality)
+- Paid tier: Schema guarantees + retry logic + enhanced observability
+- Enterprise: Custom schemas + SLA guarantees
+
+### **Success Metrics**
+- Schema validation requests per day
+- Retry success rate (target: >80%)
+- Customer willingness to pay for schema guarantees  
 
 ## Tested JSON Issues (Proven with Unit Tests)
 
