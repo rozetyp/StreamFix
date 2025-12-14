@@ -1,12 +1,122 @@
-# StreamFix Gateway
+# StreamFix
 
-> **Stop building retry loops. `json.loads()` always works.**
+**OpenAI-compatible JSON repair proxy** - fixes broken LLM JSON automatically.
+
+## ⚡ Quick Start (30 seconds)
+
+### Option 1: Install & Run
+```bash
+pip install -e .
+streamfix serve
+# ✅ Running on http://localhost:8000/v1
+```
+
+### Option 2: Try Online
+```bash
+curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "anthropic/claude-3-haiku", "messages": [{"role": "user", "content": "broken JSON: {name: Alice,}"}]}'
+```
+
+## Usage
+
+**Just change your `base_url` - everything else stays the same:**
+
+```python
+from openai import OpenAI
+
+# Before: Broken JSON crashes your app
+client = OpenAI(api_key="your-key")
+
+# After: Always get valid JSON
+client = OpenAI(
+    base_url="http://localhost:8000/v1",
+    api_key="your-key"
+)
+```
+
+```javascript
+const client = new OpenAI({
+  baseURL: 'http://localhost:8000/v1',
+  apiKey: 'your-key'
+});
+```
+
+## Features
+
+- ✅ **Fixes broken JSON** automatically (trailing commas, missing braces, etc.)
+- ✅ **Schema validation** with detailed errors (Contract Mode)
+- ✅ **Works with any provider** (OpenAI, Anthropic, local models)
+- ✅ **Streaming compatible** (doesn't break SSE)
+- ✅ **Local-first** (zero trust issues)
+
+## Configuration
+
+```bash
+# Local models (default)
+streamfix serve  # Uses localhost:1234
+
+# With API key
+streamfix serve --upstream https://api.openai.com/v1 --api-key YOUR_KEY
+
+# Environment variable
+export OPENROUTER_API_KEY=your-key
+streamfix serve --upstream https://openrouter.ai/api/v1
+```
+
+## Schema Validation (Contract Mode)
+
+Guarantee JSON matches your schema:
+
+```python
+response = client.chat.completions.create(
+    model="gpt-4",
+    schema={
+        "type": "object",
+        "properties": {"name": {"type": "string"}},
+        "required": ["name"]
+    },
+    messages=[{"role": "user", "content": "Extract name"}]
+)
+
+# Get validation details
+request_id = response.headers["x-streamfix-request-id"] 
+artifact = requests.get(f"http://localhost:8000/result/{request_id}").json()
+print(f"Valid: {artifact['schema_valid']}")
+```
+
+## Self-Hosting
+
+```bash
+# Docker
+docker run -p 8000:8000 -e OPENROUTER_API_KEY=key streamfix/gateway
+
+# Railway (one-click)
+# [![Deploy on Railway](https://railway.app/button.svg)](https://railway.app/template/streamfix)
+```
+
+## Endpoints
+
+- `POST /v1/chat/completions` - OpenAI-compatible + optional `schema` field
+- `GET /result/{request_id}` - Get repair/validation details  
+- `GET /health` - Health check
+- `GET /metrics` - Usage stats
+
+**That's it.** StreamFix makes LLM JSON reliable with zero code changes.
+
+---
+
+**Full docs**: See `/docs/` folder for API reference, deployment guides, etc.
+```bash
+# Test the live demo
+curl -X POST https://streamfix.up.railway.app/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{"model": "anthropic/claude-3-haiku", "messages": [{"role": "user", "content": "Return: {\"test\": true,}"}]}'
+```
 
 [![Production](https://img.shields.io/badge/status-production_ready-green.svg)](https://streamfix.up.railway.app)
 [![Parse Success](https://img.shields.io/badge/parse_success-100%25-brightgreen.svg)](#)
 [![Models](https://img.shields.io/badge/models-100%2B_supported-blue.svg)](#)
-
-**🌐 Try it now:** `https://streamfix.up.railway.app/v1/chat/completions`
 
 ---
 

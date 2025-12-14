@@ -140,6 +140,7 @@ async def chat_completions(request: Request, response: Response):
                 
                 return response_data
                 
+                
     except httpx.RequestError as e:
         raise HTTPException(
             status_code=500,
@@ -147,7 +148,7 @@ async def chat_completions(request: Request, response: Response):
         )
 
 
-def store_repair_artifact(request_id: str, content: str, model: str, schema: Optional[Dict[str, Any]] = None, schema_description: Optional[str] = None) -> dict:
+def store_repair_artifact(request_id: str, content: str, model: str, schema: Optional[Dict[str, Any]] = None, schema_description: Optional[str] = None, is_retry: bool = False, retry_success: Optional[bool] = None) -> dict:
     """Store repair artifact with optional schema validation and return repair info"""
     global repair_artifacts
     
@@ -192,8 +193,12 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
         schema_errors = []
     
     # Determine overall status
-    if schema_valid is False:
-        status = "SCHEMA_INVALID"
+    if schema_valid is False and not is_retry:
+        status = "SCHEMA_INVALID"  # Will trigger retry
+    elif schema_valid is False and is_retry:
+        status = "RETRY_FAILED"   # Retry attempt also failed validation
+    elif is_retry and schema_valid is True:
+        status = "RETRY_SUCCESS"  # Retry succeeded
     elif extraction_status == "FAILED":
         status = "EXTRACTION_FAILED"
     elif repairs_applied:
@@ -212,7 +217,9 @@ def store_repair_artifact(request_id: str, content: str, model: str, schema: Opt
         "repaired_content": repaired_content,
         "repairs_applied": repairs_applied,
         "parse_success": parse_success,
-        "status": status
+        "status": status,
+        "is_retry": is_retry,
+        "retry_success": retry_success
     }
     
     # Add schema validation results if schema was provided

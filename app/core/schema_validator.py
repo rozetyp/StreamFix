@@ -16,56 +16,23 @@ def validate_against_schema(json_data: str, schema: Dict[str, Any]) -> Tuple[boo
         schema: JSON schema dictionary
         
     Returns:
-        Tuple of (is_valid, detailed_error_messages)
+        Tuple of (is_valid, error_messages)
     """
     try:
         # First check if JSON is parseable
         parsed_data = json.loads(json_data)
     except json.JSONDecodeError as e:
-        return False, [f"Invalid JSON syntax at line {e.lineno}, column {e.colno}: {e.msg}"]
+        return False, [f"Invalid JSON syntax: {str(e)}"]
     
     try:
         # Validate against schema
         jsonschema.validate(parsed_data, schema)
         return True, []
     except jsonschema.ValidationError as e:
-        # Extract detailed error information
-        error_messages = []
-        
-        # Build path to error location
-        error_path = " → ".join(str(p) for p in e.absolute_path) if e.absolute_path else "root"
-        
-        # Enhanced error message with context
-        main_error = f"Schema violation at '{error_path}': {e.message}"
-        
-        # Add schema requirements context
-        if e.schema:
-            expected_type = e.schema.get("type")
-            if expected_type:
-                main_error += f" (expected type: {expected_type})"
-                
-            # Add format requirements if present
-            expected_format = e.schema.get("format")
-            if expected_format:
-                main_error += f" (expected format: {expected_format})"
-                
-            # Add required fields if this is a missing property error
-            if "required" in e.schema and e.validator == "required":
-                required_fields = e.schema["required"]
-                main_error += f" (required fields: {', '.join(required_fields)})"
-        
-        error_messages.append(main_error)
-        
-        # Add helpful suggestions based on error type
-        if e.validator == "type":
-            error_messages.append(f"💡 Try converting the value to {e.schema.get('type', 'correct')} type")
-        elif e.validator == "required":
-            missing_props = set(e.schema.get("required", [])) - set(e.instance.keys())
-            error_messages.append(f"💡 Add missing properties: {', '.join(missing_props)}")
-        elif e.validator == "format":
-            error_messages.append(f"💡 Ensure the value matches {e.schema.get('format')} format")
-        
-        return False, error_messages
+        # Extract meaningful error message
+        error_path = " -> ".join(str(p) for p in e.absolute_path) if e.absolute_path else "root"
+        error_msg = f"At {error_path}: {e.message}"
+        return False, [error_msg]
     except jsonschema.SchemaError as e:
         return False, [f"Invalid schema provided: {str(e)}"]
 
